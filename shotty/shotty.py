@@ -4,18 +4,28 @@ import click
 session = boto3.Session(profile_name='snappysean')
 ec2 = session.resource('ec2')
 
-
+@click.option('--project', default=None,
+    help="Only instances for project (tag Project:<name>)")
 @click.command()
-def list_instances():
+def list_instances(project):
     "list EC2 Instances yall"
-    for i in ec2.instances.all():
+    instances = []
+
+    if project:
+        filters = [{'Name':'tag:Project','Values':[project]}]
+        instances = ec2.instances.filter(Filters=filters)
+    else:
+        instance = ec2.instances.all()
+
+    for i in instances:
         print(', '.join((
             i.id,
             i.instance_type,
             i.private_ip_address,
             i.placement['AvailabilityZone'],
             i.state['Name'],
-            i.public_dns_name)))
+            i.private_dns_name)))
+
     return
 
 if __name__ == '__main__':
