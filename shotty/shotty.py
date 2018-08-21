@@ -134,7 +134,7 @@ def list_instances(project):
 
 @instances.command('stop')
 @click.option('--project', default=None,
-  help='Only instances for project')
+              help='Only instances for project')
 
 def stop_instances(project):
     "Stop Ec2 instances"
@@ -150,6 +150,7 @@ def stop_instances(project):
            continue
 
     return
+
 
 @instances.command('start')
 @click.option('--project', default=None,
@@ -170,6 +171,7 @@ def start_instances(project):
 
     return
 
+
 @instances.command('reboot')
 @click.option('--project', default=None,
               help='only instances for project')
@@ -181,8 +183,25 @@ def reboot_instances(project):
 
     for i in instances:
         print("Rebooting {0}......".format(i.id))
+        i.reboot()
 
-    return 
+    return
+
+
+@instances.command('terminate')
+@click.option('--project', default=None,
+              help='only instances for project')
+
+def terminate_instances(project):
+    "Terminates Ec2 instances"
+
+    instances = filter_instances(project)
+
+    for i in instances:
+        print("Terminating {0}......".format(i.id))
+        i.terminate()
+
+    return
 
 if __name__ == '__main__':
     cli()
